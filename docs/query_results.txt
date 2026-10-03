@@ -1,0 +1,156 @@
+
+=== Q1. Which companies had the highest revenue in the latest common year? (join, ORDER BY)
+ticker | name | sector | revenue_bn
+AMZN | AMAZON COM INC | Consumer Discretionary | 716.9
+WMT | WALMART INC. | Consumer Staples | 706.4
+AAPL | Apple Inc. | Technology | 416.2
+GOOGL | Alphabet Inc. | Communication Services | 402.8
+XOM | Exxon Mobil Corporation | Energy | 332.2
+
+=== Q2. Which companies grew revenue fastest over the last 3 years? (CAGR from the view, ranked with a window function)
+ticker | fiscal_year | revenue_cagr_3y_pct | growth_rank
+NVDA | 2025 | 100.0 | 1
+GOOGL | 2025 | 12.5 | 2
+MSFT | 2025 | 12.4 | 3
+AMZN | 2025 | 11.7 | 4
+WMT | 2025 | 5.3 | 5
+TSLA | 2025 | 5.2 | 6
+KO | 2025 | 3.7 | 7
+AAPL | 2025 | 1.8 | 8
+PG | 2025 | 1.7 | 9
+HD | 2025 | 1.5 | 10
+JNJ | 2025 | -0.3 | 11
+XOM | 2025 | -7.0 | 12
+
+=== Q3. Which sector earned the highest median net margin in the latest common year? (GROUP BY, median)
+sector | companies | median_net_margin_pct | total_revenue_bn
+Technology | 3 | 36.1 | 914
+Communication Services | 1 | 32.8 | 403
+Health Care | 1 | 28.5 | 94
+Consumer Staples | 3 | 19.0 | 839
+Energy | 1 | 8.7 | 332
+Consumer Discretionary | 3 | 8.6 | 976
+
+=== Q4. Which companies improved their net margin three years in a row? (LAG in a CTE)
+ticker | fiscal_year | margin_3y_ago | margin_now
+AMZN | 2025 | -0.5 | 10.8
+GOOGL | 2025 | 21.2 | 32.8
+WMT | 2025 | 1.9 | 3.1
+
+=== Q5. What was each company's worst revenue year? (ROW_NUMBER per company)
+ticker | worst_year | revenue_growth_pct
+XOM | 2015 | -34.2
+NVDA | 2008 | -16.4
+KO | 2017 | -15.4
+PG | 2016 | -14.4
+JNJ | 2023 | -10.3
+MSFT | 2016 | -8.8
+HD | 2008 | -7.8
+AAPL | 2016 | -7.7
+TSLA | 2025 | -2.9
+WMT | 2015 | -0.7
+GOOGL | 2023 | 8.7
+AMZN | 2022 | 9.4
+
+=== Q6. How much of each sector's revenue does each company make? (window SUM per sector)
+sector | ticker | revenue_bn | share_of_sector_pct
+Communication Services | GOOGL | 402.8 | 100.0
+Consumer Discretionary | AMZN | 716.9 | 73.4
+Consumer Discretionary | HD | 164.7 | 16.9
+Consumer Discretionary | TSLA | 94.8 | 9.7
+Consumer Staples | WMT | 706.4 | 84.2
+Consumer Staples | PG | 84.3 | 10.1
+Consumer Staples | KO | 47.9 | 5.7
+Energy | XOM | 332.2 | 100.0
+Health Care | JNJ | 94.2 | 100.0
+Technology | AAPL | 416.2 | 45.5
+Technology | MSFT | 281.7 | 30.8
+Technology | NVDA | 215.9 | 23.6
+
+=== Q7. Which companies turn profit into cash best? Free cash flow divided by net income. (derived metric)
+ticker | fiscal_year | fcf_bn | net_income_bn | cash_conversion
+TSLA | 2025 | 6.2 | 3.8 | 1.64
+HD | 2025 | 12.6 | 14.2 | 0.89
+PG | 2025 | 14.0 | 16.0 | 0.88
+AAPL | 2025 | 98.8 | 112.0 | 0.88
+XOM | 2025 | 23.6 | 28.8 | 0.82
+NVDA | 2025 | 96.7 | 120.1 | 0.81
+JNJ | 2025 | 19.7 | 26.8 | 0.73
+MSFT | 2025 | 71.6 | 101.8 | 0.70
+WMT | 2025 | 14.9 | 21.9 | 0.68
+GOOGL | 2025 | 73.3 | 132.2 | 0.55
+KO | 2025 | 5.3 | 13.1 | 0.40
+AMZN | 2025 | 7.7 | 77.7 | 0.10
+
+=== Q8. Cumulative revenue over the last 5 years per company. (running SUM with a window frame)
+ticker | fiscal_year | revenue_bn | revenue_5y_sum_bn
+AAPL | 2020 | 274.5 | 274.5
+AAPL | 2021 | 365.8 | 640.3
+AAPL | 2022 | 394.3 | 1034.7
+AAPL | 2023 | 383.3 | 1417.9
+AAPL | 2024 | 391.0 | 1809.0
+AAPL | 2025 | 416.2 | 1950.6
+XOM | 2020 | 178.6 | 178.6
+XOM | 2021 | 276.7 | 455.3
+XOM | 2022 | 413.7 | 868.9
+XOM | 2023 | 344.6 | 1213.5
+XOM | 2024 | 349.6 | 1563.1
+XOM | 2025 | 332.2 | 1716.8
+
+=== Q9. Which company-years had high return on equity AND high leverage? (filter on two derived KPIs)
+ticker | fiscal_year | return_on_equity_pct | liabilities_to_equity | net_margin_pct
+AAPL | 2025 | 151.9 | 3.87 | 26.9
+HD | 2025 | 110.5 | 7.20 | 8.6
+HD | 2024 | 223.0 | 13.48 | 9.3
+AAPL | 2024 | 164.6 | 5.41 | 24.0
+HD | 2023 | 1450.5 | 72.30 | 9.9
+AAPL | 2023 | 156.1 | 4.67 | 25.3
+HD | 2022 | 1095.1 | 47.94 | 10.9
+AAPL | 2022 | 197.0 | 5.96 | 25.3
+AAPL | 2021 | 150.1 | 4.56 | 25.9
+HD | 2020 | 390.0 | 20.39 | 9.7
+
+=== Q10. Where did net income and operating cash flow move in opposite directions? (compare two lagged series)
+ticker | fiscal_year | ni_prev_bn | ni_bn | ocf_prev_bn | ocf_bn
+AAPL | 2025 | 93.7 | 112.0 | 118.3 | 111.5
+PG | 2025 | 14.9 | 16.0 | 19.8 | 17.8
+AAPL | 2024 | 97.0 | 93.7 | 110.5 | 118.3
+JNJ | 2024 | 35.2 | 14.1 | 22.8 | 24.3
+TSLA | 2024 | 15.0 | 7.1 | 13.3 | 14.9
+HD | 2023 | 17.1 | 15.1 | 14.6 | 21.2
+PG | 2023 | 14.7 | 14.7 | 16.7 | 16.8
+TSLA | 2023 | 12.6 | 15.0 | 14.7 | 13.3
+AMZN | 2022 | 33.4 | -2.7 | 46.3 | 46.8
+HD | 2022 | 16.4 | 17.1 | 16.6 | 14.6
+PG | 2022 | 14.3 | 14.7 | 18.4 | 16.7
+WMT | 2022 | 13.7 | 11.7 | 24.2 | 28.8
+AMZN | 2021 | 21.3 | 33.4 | 66.1 | 46.3
+HD | 2021 | 12.9 | 16.4 | 18.8 | 16.6
+JNJ | 2021 | 14.7 | 20.9 | 23.5 | 23.4
+WMT | 2021 | 13.5 | 13.7 | 36.1 | 24.2
+JNJ | 2020 | 15.1 | 14.7 | 23.4 | 23.5
+WMT | 2020 | 14.9 | 13.5 | 25.3 | 36.1
+
+=== Q11. Which companies have the longest revenue history, and which metrics are missing most often? (data coverage)
+ticker | revenue_years | gross_profit_years | capex_years
+AAPL | 19 | 19 | 19
+AMZN | 19 | 3 | 19
+HD | 19 | 19 | 19
+JNJ | 19 | 19 | 19
+KO | 19 | 19 | 19
+MSFT | 19 | 19 | 19
+NVDA | 19 | 19 | 8
+PG | 19 | 0 | 19
+WMT | 19 | 0 | 19
+TSLA | 17 | 17 | 17
+XOM | 17 | 0 | 19
+GOOGL | 13 | 0 | 13
+
+=== Q12. Which filing and tag did each revenue number come from? (lineage, 2 joins)
+ticker | fiscal_year | source_tag | source_accn | filed
+AAPL | 2017 | SalesRevenueNet | 0000320193-17-000070 | 2017-11-03
+AAPL | 2018 | Revenues | 0000320193-18-000145 | 2018-11-05
+AAPL | 2019 | RevenueFromContractWithCustomerExcludingAssessedTax | 0000320193-19-000119 | 2019-10-31
+AMZN | 2017 | SalesRevenueNet | 0001018724-18-000005 | 2018-02-02
+AMZN | 2018 | RevenueFromContractWithCustomerExcludingAssessedTax | 0001018724-19-000004 | 2019-02-01
+AMZN | 2019 | RevenueFromContractWithCustomerExcludingAssessedTax | 0001018724-20-000004 | 2020-01-31
