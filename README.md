@@ -60,6 +60,17 @@ Full output for all 12 queries is in [`docs/query_results.txt`](docs/query_resul
 - Median net margin by sector: Technology 36.1%, Communication Services 32.8%, Health Care 28.5%, Consumer Staples 19.0%, Energy 8.7%, Consumer Discretionary 8.6%. Most sectors have only one to three companies here, so these are not sector averages.
 - Home Depot's return on equity reaches 1,450% in 2023 because its equity is very small after share buybacks. High ROE here comes from leverage, not only profit.
 
+## Power BI report
+
+![Power BI report, page 1](docs/powerbi_overview.png)
+
+Report file: [`powerbi/sec_financials.pbix`](powerbi/sec_financials.pbix). Page 1 shows the latest common year (2025): total revenue, net margin and free cash flow of the selected companies, revenue by sector since 2007, and net margin by company. Slicers filter by sector and ticker. Page 2 lists the 10 data quality checks.
+
+- Data: [`powerbi/data/sec_financials.xlsx`](powerbi/data/sec_financials.xlsx), an export of `mart.kpis_annual` and `dq.latest_checks`. Re-export it after a new pipeline run.
+- 13 DAX measures in [`powerbi/measures.dax`](powerbi/measures.dax). Ratios use SUM divided by SUM, so a selection of several companies gives a weighted figure.
+- The report is limited to fiscal years up to 2025, because not every company has reported 2026 yet.
+- I checked the numbers on page 1 against the database: all 12 net margins and the three totals match.
+
 ## Limits
 
 - 12 large companies is a small sample. Nothing here says how the whole market behaves.
@@ -98,6 +109,6 @@ docs/       saved query results
 
 ## Next steps
 
-- A Power BI report on the `mart` views.
+- A Power BI page with company drill-down.
 - Quarterly figures from 10-Q filings.
 - Restated figures next to the as-reported ones.

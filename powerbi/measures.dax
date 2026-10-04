@@ -1,0 +1,41 @@
+// DAX measures for the SEC financials report.
+// Tables: kpis_annual (one row per company and fiscal year) and dq_checks (latest data quality run).
+// Amounts in the data are in USD; the measures show billions.
+
+Revenue (bn) = DIVIDE(SUM(kpis_annual[revenue]), 1e9)
+
+Net income (bn) = DIVIDE(SUM(kpis_annual[net_income]), 1e9)
+
+Free cash flow (bn) = DIVIDE(SUM(kpis_annual[free_cash_flow]), 1e9)
+
+// Ratios use SUM / SUM, so a selection of several companies gives a weighted figure, not an average of percentages.
+Net margin % = DIVIDE(SUM(kpis_annual[net_income]), SUM(kpis_annual[revenue]))
+
+Return on equity % = DIVIDE(SUM(kpis_annual[net_income]), SUM(kpis_annual[shareholders_equity]))
+
+// Latest fiscal year inside the current slicer selection.
+Latest year = CALCULATE(MAX(kpis_annual[fiscal_year]), ALLSELECTED(kpis_annual[fiscal_year]))
+
+// A measure cannot be used directly in a CALCULATE filter, so the year is stored in a variable first.
+Revenue latest year (bn) =
+VAR y = [Latest year]
+RETURN CALCULATE([Revenue (bn)], kpis_annual[fiscal_year] = y)
+
+Net margin latest year % =
+VAR y = [Latest year]
+RETURN CALCULATE([Net margin %], kpis_annual[fiscal_year] = y)
+
+Free cash flow latest year (bn) =
+VAR y = [Latest year]
+RETURN CALCULATE([Free cash flow (bn)], kpis_annual[fiscal_year] = y)
+
+Revenue previous year (bn) =
+VAR y = MAX(kpis_annual[fiscal_year])
+RETURN CALCULATE([Revenue (bn)], kpis_annual[fiscal_year] = y - 1)
+
+Revenue growth % = DIVIDE([Revenue (bn)] - [Revenue previous year (bn)], [Revenue previous year (bn)])
+
+// Data quality page
+Checks passed = COUNTROWS(FILTER(dq_checks, dq_checks[status] = "pass"))
+
+Checks total = COUNTROWS(dq_checks)
